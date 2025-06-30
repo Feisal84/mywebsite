@@ -1,26 +1,137 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: var(--bg-light);
+  --text: var(--text-light);
+  --bg-light: rgba(250, 250, 250, 0.808);
+  --bg-dark: #030303de; /* Changed to pure black */
+  --text-light: #111;
+  --text-dark: #f8f9fa;
+  --hover-bg: #f0f0f0;
+  --accent-color: #ffc107;
+  --sun-reflector-color: #22c55e; /* Green color for sun reflectors */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+[data-theme="dark"] {
+  --bg: var(--bg-dark);
+  --text: var(--text-dark);
+  --sun-reflector-color: #88dfbf; /* Lighter green for dark mode */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+[data-theme="light"] {
+  --bg: var(--bg-light);
+  --text: var(--text-light);
+  --sun-reflector-color: #22c55e; /* Green for light mode */
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bg);
+  color: var(--text);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Green Sun Reflector Effects */
+.navbar {
+  position: relative;
+}
+
+/* Navbar theme colors */
+[data-theme="dark"] .navbar {
+  background-color: #424242 !important; /* Gray color for dark theme */
+}
+
+[data-theme="light"] .navbar {
+  background-color: var(--bg-light) !important; /* Keep light theme background */
+}
+
+.navbar::before {
+  content: '';
+  position: absolute;
+  bottom: -200px;
+  left: -30px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, var(--sun-reflector-color) 0%, rgba(141, 182, 156, 0.6) 40%, rgba(116, 189, 143, 0.3) 70%, transparent 100%);
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: sunReflector 3s ease-in-out infinite;
+  z-index: 99;
+  pointer-events: none;
+}
+
+.navbar::after {
+  content: '';
+  position: absolute;
+  bottom: -200px;
+  right: -30px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, var(--sun-reflector-color) 0%, rgba(150, 197, 167, 0.6) 40%, rgba(130, 185, 151, 0.3) 70%, transparent 100%);
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: sunReflector 3s ease-in-out infinite 1.5s;
+  z-index: 99;
+  pointer-events: none;
+}
+
+@keyframes sunReflector {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.9;
+  }
+}
+
+/* Additional reflector rays */
+.navbar::before {
+  box-shadow: 
+    0 0 20px rgba(34, 197, 94, 0.4),
+    0 0 40px rgba(34, 197, 94, 0.2),
+    0 0 60px rgba(34, 197, 94, 0.1);
+}
+
+.navbar::after {
+  box-shadow: 
+    0 0 20px rgba(34, 197, 94, 0.4),
+    0 0 40px rgba(34, 197, 94, 0.2),
+    0 0 60px rgba(34, 197, 94, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .navbar::before,
+  .navbar::after {
+    width: 25px;
+    height: 25px;
+    bottom: -12px;
+  }
+  
+  .navbar::before {
+    left: 15px;
+  }
+  
+  .navbar::after {
+    right: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar::before,
+  .navbar::after {
+    width: 20px;
+    height: 20px;
+    bottom: -10px;
+  }
+  
+  .navbar::before {
+    left: 10px;
+  }
+  
+  .navbar::after {
+    right: 10px;
+  }
+}
+
