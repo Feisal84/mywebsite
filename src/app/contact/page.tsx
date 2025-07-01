@@ -8,6 +8,8 @@ export default function ContactPage() {
     name: '',
     email: '',
     message: '',
+    phone: '',
+    subject: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -33,18 +35,31 @@ export default function ContactPage() {
       setIsSubmitting(true);
       setSuccessMessage('');
       setErrorMessage('');
+      
       try {
-        // Replace this with your actual submit logic (e.g., API call)
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setSuccessMessage('Message sent successfully!');
-        setFormData({ name: '', email: '', message: '' });
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          setSuccessMessage('Message sent successfully! We will get back to you soon.');
+          setFormData({ name: '', email: '', message: '', phone: '', subject: '' });
+        } else {
+          setErrorMessage(result.error || 'Failed to send message. Please try again.');
+        }
       } catch (error) {
-        setErrorMessage('Failed to send message. Please try again.');
+        setErrorMessage('Network error. Please check your connection and try again.');
       } finally {
         setIsSubmitting(false);
       }
     },
-    []
+    [formData]
   );
 
   return (
@@ -63,7 +78,6 @@ export default function ContactPage() {
     </ul>
   </div>
   </div>
-         {/* Call-to-Action Section */}
          <section className="cta">
          <div className="cta-section">
            <form onSubmit={handleSubmit} className="sign-up-form">
@@ -87,6 +101,24 @@ export default function ContactPage() {
                className="form-input"
                required
              />
+              <label>Phone (Optional)</label>
+             <input
+               type="tel"
+               name="phone"
+               value={formData.phone}
+               onChange={handleInputChange}
+               placeholder={t('Your phone number')}
+               className="form-input"
+             />
+              <label>Subject (Optional)</label>
+             <input
+               type="text"
+               name="subject"
+               value={formData.subject}
+               onChange={handleInputChange}
+               placeholder={t('Subject of your message')}
+               className="form-input"
+             />
               <label style={{marginLeft:'20px'}}>Your Message</label>
              <textarea
                name="message"
@@ -98,11 +130,11 @@ export default function ContactPage() {
                required
              ></textarea>
              <button style={{backgroundColor:'var(--button-color)',color:'var(--button-text)'}} type="submit" className="cta-button" disabled={isSubmitting}>
-               {isSubmitting ? t('Submitting...') : t('Send')}
+               {isSubmitting ? t('Submitting...') : t('Send Message')}
              </button>
            </form>
-           {successMessage && <p className="success-message">{successMessage}</p>}
-           {errorMessage && <p className="error-message">{errorMessage}</p>}
+           {successMessage && <p className="success-message" style={{color: 'green', marginTop: '10px'}}>{successMessage}</p>}
+           {errorMessage && <p className="error-message" style={{color: 'red', marginTop: '10px'}}>{errorMessage}</p>}
          </div>
        </section>
      </div>
